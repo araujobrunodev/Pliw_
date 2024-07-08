@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Statistic;
 
 public class Remove_Item : MonoBehaviour
 {
+    private bool IsDead = false;
+    private float timeToRemoveIt = 0.2f;
     void OnMouseDown () {
-        print("remove "+ gameObject.name);
-
-        Destroy(gameObject, 1);
+        if (!IsDead) {
+            Statistic.score++;
+            Destroy(gameObject, timeToRemoveIt);
+            IsDead = true;
+        }
     }
 }
