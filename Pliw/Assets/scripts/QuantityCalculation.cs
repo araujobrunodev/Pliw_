@@ -13,7 +13,7 @@ public class QuantityCalculation : MonoBehaviour
         float width = value[0];
         float height = value[1];
         float result = Mathf.Abs((width - height) / 15);
-        limitOfthePliwBall = (int)result;
+        limitOfthePliwBall = (int)result - 1;
     }
 
     void Start () {

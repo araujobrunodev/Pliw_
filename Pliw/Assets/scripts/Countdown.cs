@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using static Timer;
+using static CreatePliwBalls;
 
 public class Countdown : MonoBehaviour
 {
@@ -11,12 +12,14 @@ public class Countdown : MonoBehaviour
     public static int startTime;
     float time = 4;
     public Image warn;
+    CreatePliwBalls PB;
     void Count () 
     {
         if (time > 0) time -= Time.deltaTime;
         else {
             Timer.CanStartToCount = true;
             warn.gameObject.SetActive(false);
+            CreatePliwBalls.canCreate = true;
         }
     }
 
