@@ -6,7 +6,7 @@ using TMPro;
 public class level : MonoBehaviour
 {
     public TMP_Text levelText;
-    private static int Level;
+    public static int Level = 1;
 
     // Update is called once per frame
     void Update()

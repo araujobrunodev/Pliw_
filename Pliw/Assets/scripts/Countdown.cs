@@ -10,7 +10,8 @@ public class Countdown : MonoBehaviour
 {
     public TMP_Text obj;
     public static int startTime;
-    float time = 4;
+    public static readonly float defaultTime = 4f;
+    public static float time = defaultTime;
     public Image warn;
     PliwBalls PB;
     void Count () 

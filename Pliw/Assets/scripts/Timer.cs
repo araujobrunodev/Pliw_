@@ -7,13 +7,18 @@ using static resetGame;
 
 public class Timer : MonoBehaviour
 {
-    public static int timer = 20;
+    public static readonly int defaultToTimer = 20; 
+    public static int timer = defaultToTimer;
     public static bool CanStartToCount = false;
     public TMP_Text countText;
-    private float defaultTime = (float)timer;
+    public static float defaultTime = (float)defaultToTimer;
     void StartCount () {
-        if (defaultTime > 0) defaultTime -= Time.deltaTime;
-        else resetGame.Appear(true);
+        var deltaTime = Time.deltaTime;
+        
+        if (defaultTime > 0) defaultTime -= deltaTime;
+        else {
+            resetGame.Appear(true);
+        }
         
         timer = (int)defaultTime; 
     }
