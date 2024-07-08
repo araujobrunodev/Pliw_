@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static QuantityCalculation;
 
-public class CreatePliwBalls : MonoBehaviour
+public class PliwBalls : MonoBehaviour
 {
     public static List<PliwBall> pliwBalls = new List<PliwBall>();
     public static bool canCreate = false;
@@ -22,13 +22,14 @@ public class CreatePliwBalls : MonoBehaviour
                 id = count.ToString(),
                 positionX = RandomPosition("width"),
                 positionY = RandomPosition("height"),
-                type = 0
+                type = 0,
+                name = "Pliw ball " + count.ToString()
             });
 
             var pb = pliwBalls[count] as PliwBall;
             
             pb.item.transform.SetParent(GameObject.Find("mainArea").transform, false);
-            pb.item.name = pb.name + count.ToString();
+            pb.item.name = pb.name;
             pb.item.AddComponent<RectTransform>();
             pb.item.AddComponent<SpriteRenderer>();
             pb.item.AddComponent<CircleCollider2D>();
@@ -61,6 +62,19 @@ public class CreatePliwBalls : MonoBehaviour
                 break;
         }
         return randomNumber;
+    }
+
+    public static void RemoveAll () {
+        foreach (PliwBall pb in pliwBalls) {
+            Destroy(pb.item, 0.1f);
+        }
+
+        pliwBalls.Clear();
+    }
+
+    public static void Remove (string name) {
+        var item = pliwBalls.Find(q => q.name == name);
+        pliwBalls.Remove(item);
     }
 
     // Update is called once per frame

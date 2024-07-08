@@ -7,7 +7,7 @@ using static resetGame;
 
 public class Timer : MonoBehaviour
 {
-    public static int timer = 30;
+    public static int timer = 20;
     public static bool CanStartToCount = false;
     public TMP_Text countText;
     private float defaultTime = (float)timer;
