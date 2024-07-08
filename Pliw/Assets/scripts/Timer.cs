@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Countdown;
 using TMPro;
+using static resetGame;
 
 public class Timer : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class Timer : MonoBehaviour
     private float defaultTime = (float)timer;
     void StartCount () {
         if (defaultTime > 0) defaultTime -= Time.deltaTime;
-        else print("call resetGame");
+        else resetGame.Appear(true);
         
         timer = (int)defaultTime; 
     }

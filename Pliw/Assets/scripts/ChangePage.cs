@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static resetGame;
 
 public class ChangePage : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class ChangePage : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        resetGame.Appear(false);
         homePageActive = true;
         playPageActive = false;
         button.onClick.AddListener(Change);
