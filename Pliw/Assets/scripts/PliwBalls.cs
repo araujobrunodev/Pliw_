@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static QuantityCalculation;
+using static level;
 
 public class PliwBalls : MonoBehaviour
 {
@@ -10,7 +11,49 @@ public class PliwBalls : MonoBehaviour
     private float randomNumber;
     public Sprite[] sprites;
     
-    // Start is called before the first frame updateCreate();
+    int ClassifyType () {
+        var max = 0;
+        var random = 0;
+
+        switch (level.Level) {
+            case 1:
+                max = 0;
+                break;
+
+            case 5:
+                max = 1;
+                break;
+
+            case 10:
+                max = 2;
+                break;
+
+            case 15:
+                max = 3;
+                break;
+
+            case 30:
+                max = 4;
+                break;
+
+            case 40:
+                max = 5;
+                break;
+
+            case 60:
+                max = 6;
+                break;
+
+            default:
+                max = 6;
+                break;
+        }
+
+        random = Random.Range(0, max);
+
+        return random;
+    }
+
     public void Create()
     {
         for (int count = 0; count < QuantityCalculation.limitOfthePliwBall; count++) {
@@ -22,7 +65,7 @@ public class PliwBalls : MonoBehaviour
                 id = count.ToString(),
                 positionX = RandomPosition("width"),
                 positionY = RandomPosition("height"),
-                type = 0,
+                type = ClassifyType(),
                 name = "Pliw ball " + count.ToString()
             });
 
