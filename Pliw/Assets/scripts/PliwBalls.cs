@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static QuantityCalculation;
 using static level;
+using static Timer;
 
 public class PliwBalls : MonoBehaviour
 {
@@ -11,6 +12,21 @@ public class PliwBalls : MonoBehaviour
     private float randomNumber;
     public Sprite[] sprites;
     private float time = 0f;
+    private float timeToCreate = 0f;
+    private float StartX, StartY, EndX, EndY;
+
+    public static void RemoveAll () {
+        foreach (PliwBall pb in pliwBalls) {
+            Destroy(pb.item);
+        }
+
+        pliwBalls.Clear();
+    }
+
+    public static void Remove (string name) {
+        var item = pliwBalls.Find(q => q.name == name);
+        pliwBalls.Remove(item);
+    }
     
     int ClassifyType () {
         var min = 0;
@@ -50,45 +66,37 @@ public class PliwBalls : MonoBehaviour
 
     public void Create()
     {
-        for (int count = 0; count < QuantityCalculation.limitOfthePliwBall; count++) {
-            pliwBalls.Add(new PliwBall{
-                CanMoveX = false,
-                CanMoveY = false,
-                flasher = false,
-                item = new GameObject(),
-                id = count.ToString(),
-                positionX = RandomPosition("width"),
-                positionY = RandomPosition("height"),
-                type = ClassifyType(),
-                name = "Pliw ball " + count.ToString()
-            });
+        var index = pliwBalls.Count;
+        
+        pliwBalls.Add(new PliwBall{
+            CanMoveX = false,
+            CanMoveY = false,
+            flasher = false,
+            item = new GameObject(),
+            id = index.ToString(),
+            positionX = RandomPosition("width"),
+            positionY = RandomPosition("height"),
+            type = ClassifyType(),
+            name = "Pliw ball " + (index + Random.Range(0,1000)).ToString()
+        });
 
-            var pb = pliwBalls[count] as PliwBall;
-            pb.CanMoveX = GetCanMove(pb.type, "x");
-            pb.CanMoveY = GetCanMove(pb.type, "y");
-            pb.flasher = GetFlasher(pb.type);
-            
-            pb.item.transform.SetParent(GameObject.Find("mainArea").transform, false);
-            pb.item.name = pb.name;
-            pb.item.AddComponent<RectTransform>();
-            pb.item.AddComponent<SpriteRenderer>();
-            pb.item.AddComponent<CircleCollider2D>();
-            pb.item.AddComponent<Remove_Item>();
-
-            pb.item.GetComponent<RectTransform>().localPosition = new Vector2(pb.positionX, pb.positionY);
-            pb.item.GetComponent<RectTransform>().localScale = new Vector3(125, 125, 0);
-            pb.item.GetComponent<SpriteRenderer>().sprite = sprites[pb.type];
-        }
-
-        canCreate = false;
+        var pb = pliwBalls[index] as PliwBall;
+        pb.CanMoveX = GetCanMove(pb.type, "x");
+        pb.CanMoveY = GetCanMove(pb.type, "y");
+        pb.flasher = GetFlasher(pb.type);
+        
+        pb.item.name = pb.name;
+        pb.item.transform.SetParent(GameObject.Find("mainArea").transform, false);
+        pb.item.AddComponent<RectTransform>();
+        pb.item.AddComponent<SpriteRenderer>();
+        pb.item.AddComponent<CircleCollider2D>();
+        pb.item.AddComponent<Remove_Item>();
+        pb.item.GetComponent<RectTransform>().localPosition = new Vector2(pb.positionX, pb.positionY);
+        pb.item.GetComponent<RectTransform>().localScale = new Vector3(125, 125, 0);
+        pb.item.GetComponent<SpriteRenderer>().sprite = sprites[pb.type];
     }
 
     private float RandomPosition (string type) {
-        float StartX = GameObject.Find("pointStartX").transform.localPosition.x;
-        float StartY = GameObject.Find("pointStartY").transform.localPosition.y;
-        float EndX = GameObject.Find("pointEndX").transform.localPosition.x;
-        float EndY = GameObject.Find("pointEndY").transform.localPosition.y;
-        
         switch (type) {
             case "width":
                 var width = Random.Range(StartX, EndX);
@@ -103,29 +111,11 @@ public class PliwBalls : MonoBehaviour
         return randomNumber;
     }
 
-    public static void RemoveAll () {
-        foreach (PliwBall pb in pliwBalls) {
-            Destroy(pb.item, 0.1f);
-        }
-
-        pliwBalls.Clear();
-    }
-
-    public static void Remove (string name) {
-        var item = pliwBalls.Find(q => q.name == name);
-        pliwBalls.Remove(item);
-    }
-
     void Move () {
         if (pliwBalls.Count == 0) return;
         
         foreach (PliwBall pb in pliwBalls) {
             if (!pb.CanMoveX) continue;
-
-            float StartX = GameObject.Find("pointStartX").transform.localPosition.x;
-            float StartY = GameObject.Find("pointStartY").transform.localPosition.y;
-            float EndX = GameObject.Find("pointEndX").transform.localPosition.x;
-            float EndY = GameObject.Find("pointEndY").transform.localPosition.y;
 
             var moveX = Random.Range(-45f, 45f);
             var moveY = Random.Range(-45f, 45f);
@@ -139,10 +129,10 @@ public class PliwBalls : MonoBehaviour
             var destination = currentPosition;
 
             if (!canMoveBoth) {
-                var canMoveOne = Random.Range(0,1);
+                var canMoveOne = Random.Range(0,2);
                 if (pb.type == 2) canMoveOne = 0;
 
-                if (canMoveOne >= 0.5) {
+                if (canMoveOne > 0) {
                     if (currentPosition.x >= EndX) destination.x -= (Mathf.Abs(moveX) * 2);
                     else if (currentPosition.x <= StartX) destination.x += (Mathf.Abs(moveX) * 2);
                     else destination.x += moveX;
@@ -174,16 +164,29 @@ public class PliwBalls : MonoBehaviour
         }
     }
 
+    void Start () {
+        StartX = GameObject.Find("pointStartX").transform.localPosition.x;
+        StartY = GameObject.Find("pointStartY").transform.localPosition.y;
+        EndX = GameObject.Find("pointEndX").transform.localPosition.x;
+        EndY = GameObject.Find("pointEndY").transform.localPosition.y;
+    }
+
     void Update()
     {
         time += Time.deltaTime;
+        timeToCreate += Time.deltaTime;
+
+        if (Timer.timer > 0) canCreate = true;
+        else canCreate = false;
+        
+        if ((int)timeToCreate % 3 == 0 && canCreate) {
+            if (pliwBalls.Count < QuantityCalculation.limitOfthePliwBall) Create();
+        }
 
         if ((int)time % 5 == 0 && !canCreate) {
             Move();
             Flasher();
         }
-        
-        if (canCreate) Create();
     }
 }
 
