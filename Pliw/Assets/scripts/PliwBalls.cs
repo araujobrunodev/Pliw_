@@ -10,6 +10,7 @@ public class PliwBalls : MonoBehaviour
     public static bool canCreate = false;
     private float randomNumber;
     public Sprite[] sprites;
+    private float time = 0f;
     
     int ClassifyType () {
         var min = 0;
@@ -54,6 +55,14 @@ public class PliwBalls : MonoBehaviour
         return can;
     }
 
+    bool GetFlasher (int type) {
+        var flasher = false;
+
+        if (type == 6) flasher = true;
+
+        return flasher;
+    }
+
     public void Create()
     {
         for (int count = 0; count < QuantityCalculation.limitOfthePliwBall; count++) {
@@ -72,6 +81,7 @@ public class PliwBalls : MonoBehaviour
             var pb = pliwBalls[count] as PliwBall;
             pb.CanMoveX = GetCanMove(pb.type, "x");
             pb.CanMoveY = GetCanMove(pb.type, "y");
+            pb.flasher = GetFlasher(pb.type);
             
             pb.item.transform.SetParent(GameObject.Find("mainArea").transform, false);
             pb.item.name = pb.name;
@@ -169,13 +179,24 @@ public class PliwBalls : MonoBehaviour
             pb.item.transform.localPosition = Vector2.Lerp(currentPosition, destination, speed);
         }
     }
-    private float time = 0f;
-    // Update is called once per frame
+
+    void Flasher () {
+        foreach (PliwBall pb in pliwBalls) {
+            if (!pb.flasher) continue;
+
+            if (pb.item.activeSelf) pb.item.SetActive(false);
+            else pb.item.SetActive(true);
+        }
+    }
+
     void Update()
     {
         time += Time.deltaTime;
 
-        if ((int)time % 5 == 0 && !canCreate) Move();
+        if ((int)time % 5 == 0 && !canCreate) {
+            Move();
+            Flasher();
+        }
         
         if (canCreate) Create();
     }
