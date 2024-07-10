@@ -21,7 +21,8 @@ public class resetGame : MonoBehaviour
 
     public static void Appear (bool hidden) {
         obj.SetActive(hidden);
-        if (hidden) {Reset();}
+        if (hidden) Reset();
+        else stateKey = "";
     }
 
     private static void State () {
@@ -42,6 +43,10 @@ public class resetGame : MonoBehaviour
 
     private static void Reset () {
         PliwBalls.RemoveAll();
+        
+        if (stateKey != "") return;
+        
+        Statistic.save();
         placeBoardArrow.SetActive(true);
         placeBoardLevel.SetActive(false);
         Decide();

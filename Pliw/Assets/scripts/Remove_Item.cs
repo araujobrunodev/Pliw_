@@ -12,6 +12,7 @@ public class Remove_Item : MonoBehaviour
         if (!IsDead) {
             IsDead = true;
             PliwBalls.Remove(gameObject.name);
+            Statistic.AllClicks++;
             Statistic.score++;
             Destroy(gameObject, timeToRemoveIt);
         }
