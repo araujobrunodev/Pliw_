@@ -14,26 +14,12 @@ public class PliwBalls : MonoBehaviour
     
     int ClassifyType () {
         var min = 0;
-        var max = 6;
+        var max = 0;
         var random = 0;
 
-        if (level.Level <= 1) {
-            max = 0;
-        } else if (level.Level <= 5) {
-            max = 1;
-        } else if (level.Level <= 10) {
-            max = 2;
-        } else if (level.Level <= 15) {
-            max = 3;
-        } else if (level.Level <= 30) {
-            max = 4;
-        } else if (level.Level <= 40) {
-            max = 5;
-        } else if (level.Level <= 60) {
-            max = 6;
-        } else {
-            max = 6;
-        }
+        if (level.Level <= 35) {
+            max = (int)(level.Level / 5);
+        } else max = 7;
 
         random = Random.Range(min, max);
 
@@ -48,7 +34,6 @@ public class PliwBalls : MonoBehaviour
         if (type > 1) posX = true;
         if (type > 2) posY = true;
         
-
         if (position == "x") can = posX;
         else if (position == "y") can = posY;
 
