@@ -9,7 +9,20 @@ public class Statistic : MonoBehaviour
     public TMP_Text scoreText, bestScoreText, AllClicksText, AllLostText;
     public static int score, bestScore, AllClicks, allLost;
     private static string path = "./Assets/load/savedVariables.json";
-    // Update is called once per frame
+    
+    void load () {
+        var json = System.IO.File.ReadAllText(path);
+        var jsonToObj = JsonUtility.FromJson<Statistic_variables>(json) as Statistic_variables;
+        
+        score = jsonToObj.score;
+        bestScore = jsonToObj.bestscore;
+        AllClicks = jsonToObj.allClicks;
+        allLost = jsonToObj.allLost;
+    }
+
+    void Start () {
+        load();
+    }
     void Update()
     {
         scoreText.text = "Current score: " + score;
@@ -29,7 +42,7 @@ public class Statistic : MonoBehaviour
         obj.allClicks = AllClicks;
 
         var objJSON = JsonUtility.ToJson(obj);
-        
+
         System.IO.File.WriteAllText(path, objJSON);
     }
 }
