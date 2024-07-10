@@ -12,46 +12,46 @@ public class PliwBalls : MonoBehaviour
     public Sprite[] sprites;
     
     int ClassifyType () {
-        var max = 0;
+        var min = 0;
+        var max = 6;
         var random = 0;
 
-        switch (level.Level) {
-            case 1:
-                max = 0;
-                break;
-
-            case 5:
-                max = 1;
-                break;
-
-            case 10:
-                max = 2;
-                break;
-
-            case 15:
-                max = 3;
-                break;
-
-            case 30:
-                max = 4;
-                break;
-
-            case 40:
-                max = 5;
-                break;
-
-            case 60:
-                max = 6;
-                break;
-
-            default:
-                max = 6;
-                break;
+        if (level.Level <= 1) {
+            max = 0;
+        } else if (level.Level <= 5) {
+            max = 1;
+        } else if (level.Level <= 10) {
+            max = 2;
+        } else if (level.Level <= 15) {
+            max = 3;
+        } else if (level.Level <= 30) {
+            max = 4;
+        } else if (level.Level <= 40) {
+            max = 5;
+        } else if (level.Level <= 60) {
+            max = 6;
+        } else {
+            max = 6;
         }
 
-        random = Random.Range(0, max);
+        random = Random.Range(min, max);
 
         return random;
+    }
+
+    bool GetCanMove (int type, string position) {
+        var can = false;
+        var posX = false;
+        var posY = false;
+
+        if (type > 1) posX = true;
+        if (type > 2) posY = true;
+        
+
+        if (position == "x") can = posX;
+        else if (position == "y") can = posY;
+
+        return can;
     }
 
     public void Create()
@@ -70,6 +70,8 @@ public class PliwBalls : MonoBehaviour
             });
 
             var pb = pliwBalls[count] as PliwBall;
+            pb.CanMoveX = GetCanMove(pb.type, "x");
+            pb.CanMoveY = GetCanMove(pb.type, "y");
             
             pb.item.transform.SetParent(GameObject.Find("mainArea").transform, false);
             pb.item.name = pb.name;
@@ -81,7 +83,6 @@ public class PliwBalls : MonoBehaviour
             pb.item.GetComponent<RectTransform>().localPosition = new Vector2(pb.positionX, pb.positionY);
             pb.item.GetComponent<RectTransform>().localScale = new Vector3(125, 125, 0);
             pb.item.GetComponent<SpriteRenderer>().sprite = sprites[pb.type];
-            
         }
 
         canCreate = false;
@@ -120,12 +121,63 @@ public class PliwBalls : MonoBehaviour
         pliwBalls.Remove(item);
     }
 
+    void Move () {
+        if (pliwBalls.Count == 0) return;
+        
+        foreach (PliwBall pb in pliwBalls) {
+            if (!pb.CanMoveX) continue;
+
+            float StartX = GameObject.Find("pointStartX").transform.localPosition.x;
+            float StartY = GameObject.Find("pointStartY").transform.localPosition.y;
+            float EndX = GameObject.Find("pointEndX").transform.localPosition.x;
+            float EndY = GameObject.Find("pointEndY").transform.localPosition.y;
+
+            var moveX = Random.Range(-45f, 45f);
+            var moveY = Random.Range(-45f, 45f);
+            var canMoveBoth = false;
+            var speed = pb.speed;
+            if (pb.type >= 5) speed *= 2;
+
+            if (pb.type > 3) canMoveBoth = true;
+
+            var currentPosition = pb.item.transform.localPosition;
+            var destination = currentPosition;
+
+            if (!canMoveBoth) {
+                var canMoveOne = Random.Range(0,1);
+                if (pb.type == 2) canMoveOne = 0;
+
+                if (canMoveOne >= 0.5) {
+                    if (currentPosition.x >= EndX) destination.x -= (Mathf.Abs(moveX) * 2);
+                    else if (currentPosition.x <= StartX) destination.x += (Mathf.Abs(moveX) * 2);
+                    else destination.x += moveX;
+                } else {
+                    if (currentPosition.y <= EndY) destination.y += (Mathf.Abs(moveY) * 2);
+                    else if (currentPosition.y >= StartY) destination.y -= (Mathf.Abs(moveY) * 2);
+                    else destination.y += moveY;
+                }
+            } else {
+                if (currentPosition.x >= EndX) destination.x -= (Mathf.Abs(moveX) * 2);
+                else if (currentPosition.x <= StartX) destination.x += (Mathf.Abs(moveX) * 2);
+                else destination.x += moveX;
+
+                if (currentPosition.y <= EndY) destination.y += (Mathf.Abs(moveY) * 2);
+                else if (currentPosition.y >= StartY) destination.y -= (Mathf.Abs(moveY) * 2);
+                else destination.y += moveY;
+            }
+
+            pb.item.transform.localPosition = Vector2.Lerp(currentPosition, destination, speed);
+        }
+    }
+    private float time = 0f;
     // Update is called once per frame
     void Update()
     {
-        if (canCreate) {
-            Create();
-        }
+        time += Time.deltaTime;
+
+        if ((int)time % 5 == 0 && !canCreate) Move();
+        
+        if (canCreate) Create();
     }
 }
 
@@ -136,8 +188,8 @@ public class PliwBall {
     public bool CanMoveY = false;
     public float positionX;
     public float positionY;
-    public float speed;
+    public float speed = 0.2f;
     public bool flasher = false;
     public string id = "";
-    public GameObject item;
+    public GameObject item; 
 }
