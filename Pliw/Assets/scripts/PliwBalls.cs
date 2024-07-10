@@ -106,7 +106,7 @@ public class PliwBalls : MonoBehaviour
         if (warn.activeSelf) return; 
         
         if ((int)time % 2 == 0) {
-            if (pliwBalls.Count < QuantityCalculation.limitOfthePliwBall) Create();
+            if (pliwBalls.Count < QuantityCalculation.scoreRequest) Create();
         }
 
         if ((int)time % 3 == 0) {

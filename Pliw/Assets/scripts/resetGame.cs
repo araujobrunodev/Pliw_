@@ -49,7 +49,7 @@ public class resetGame : MonoBehaviour
     }
 
     private static void Decide () {
-        if (Statistic.score >= QuantityCalculation.limitOfthePliwBall) {
+        if (Statistic.score >= QuantityCalculation.scoreRequest) {
             stateKey = "win";
         } else {
             stateKey = "lose";
