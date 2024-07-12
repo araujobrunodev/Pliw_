@@ -11,8 +11,10 @@ public class reloadGame : MonoBehaviour
 {
     public GameObject countdown; 
     void Update () {
-        var size = gameObject.GetComponent<RectTransform>().sizeDelta;
-        gameObject.GetComponent<BoxCollider2D>().size = size;
+        var rect = gameObject.GetComponent<RectTransform>().rect;
+        var collider = gameObject.GetComponent<BoxCollider2D>();
+        
+        collider.size = new Vector2(rect.width, rect.height);        
     }
     void OnMouseDown () {
         switch (resetGame.stateKey) {

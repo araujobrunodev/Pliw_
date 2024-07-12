@@ -14,7 +14,6 @@ public class Statistic : MonoBehaviour
         var json = System.IO.File.ReadAllText(path);
         var jsonToObj = JsonUtility.FromJson<Statistic_variables>(json) as Statistic_variables;
         
-        score = jsonToObj.score;
         bestScore = jsonToObj.bestscore;
         AllClicks = jsonToObj.allClicks;
         allLost = jsonToObj.allLost;
