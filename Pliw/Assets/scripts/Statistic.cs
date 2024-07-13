@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Networking;
 
 public class Statistic : MonoBehaviour
 {
     public TMP_Text scoreText, bestScoreText, AllClicksText, AllLostText;
     public static int score, bestScore, AllClicks, allLost;
-    private static string path = "./Assets/load/savedVariables.json";
-    
+    private static string path = "";
     void load () {
-        var json = System.IO.File.ReadAllText(path);
+        var json = File.ReadAllText(path);
         var jsonToObj = JsonUtility.FromJson<Statistic_variables>(json) as Statistic_variables;
         
         bestScore = jsonToObj.bestscore;
@@ -21,6 +22,8 @@ public class Statistic : MonoBehaviour
 
     void Start () {
         load();
+        path = Application.persistentDataPath + "/savedVariables.json";
+        StartCoroutine(call());
     }
     void Update()
     {
@@ -42,7 +45,26 @@ public class Statistic : MonoBehaviour
 
         var objJSON = JsonUtility.ToJson(obj);
 
-        System.IO.File.WriteAllText(path, objJSON);
+        File.WriteAllText(path, objJSON);
+        print(File.ReadAllText(path));
+    }
+
+    IEnumerator call () {
+        if (!File.Exists(path)) return;
+        
+        using (UnityWebRequest server = new UnityWebRequest(path)) {
+
+            yield return server.SendWebRequest();
+
+            print("result: " + server.result);
+            print("status: "+ UnityWebRequest.Result.Success);
+
+            if (server.result == UnityWebRequest.Result.Success) {
+                print("variables into json: "+ server.downloadHandler.text);
+            } else {
+                print("cant receive file");
+            }
+        }
     }
 }
 
