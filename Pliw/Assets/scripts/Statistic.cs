@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Runtime.InteropServices;
 using UnityEngine.Networking;
 
 public class Statistic : MonoBehaviour
@@ -11,8 +12,18 @@ public class Statistic : MonoBehaviour
     public TMP_Text scoreText, bestScoreText, AllClicksText, AllLostText;
     public static int score, bestScore, AllClicks, allLost;
     private static string path = "";
+    [DllImport("__Internal")]
+    private static extern int getWidth();
+    [DllImport("__Internal")]
+
+    private static extern int getHeight();
+    [DllImport("__Internal")]
+    private static extern void getScreen();
     void load () {
         var json = File.ReadAllText(path);
+        
+        if (json == null) return;
+        
         var jsonToObj = JsonUtility.FromJson<Statistic_variables>(json) as Statistic_variables;
         
         bestScore = jsonToObj.bestscore;
@@ -21,9 +32,18 @@ public class Statistic : MonoBehaviour
     }
 
     void Start () {
-        load();
+        Screen.SetResolution(getWidth(), getHeight(), false);
+        getScreen();
+
         path = Application.persistentDataPath + "/savedVariables.json";
-        StartCoroutine(call());
+        PlatformType();
+    }
+
+    private void PlatformType () {
+        var type = Application.platform;
+
+        if (type == RuntimePlatform.WebGLPlayer) StartCoroutine(call(path));
+        else load();
     }
     void Update()
     {
@@ -49,22 +69,17 @@ public class Statistic : MonoBehaviour
         print(File.ReadAllText(path));
     }
 
-    IEnumerator call () {
-        if (!File.Exists(path)) return;
-        
-        using (UnityWebRequest server = new UnityWebRequest(path)) {
-
+    IEnumerator call (string source) {
+        using (UnityWebRequest server = new UnityWebRequest(source)) {
             yield return server.SendWebRequest();
-
-            print("result: " + server.result);
-            print("status: "+ UnityWebRequest.Result.Success);
-
+            
             if (server.result == UnityWebRequest.Result.Success) {
                 print("variables into json: "+ server.downloadHandler.text);
+                load();
             } else {
                 print("cant receive file");
             }
-        }
+        }   
     }
 }
 
