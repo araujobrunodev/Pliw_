@@ -12,38 +12,57 @@ public class Statistic : MonoBehaviour
     public TMP_Text scoreText, bestScoreText, AllClicksText, AllLostText;
     public static int score, bestScore, AllClicks, allLost;
     private static string path = "";
+    
     [DllImport("__Internal")]
     private static extern int getWidth();
     [DllImport("__Internal")]
-
     private static extern int getHeight();
     [DllImport("__Internal")]
-    private static extern void getScreen();
+    private static extern int loadBestscore();
+    [DllImport("__Internal")]
+    private static extern int loadAllClicks();
+    [DllImport("__Internal")]
+    private static extern int loadAllLost();
+    [DllImport("__Internal")]
+    private static extern void saveGame(int score, int bestscore, int allClicks, int allLost);
+
     void load () {
-        var json = File.ReadAllText(path);
-        
-        if (json == null) return;
-        
-        var jsonToObj = JsonUtility.FromJson<Statistic_variables>(json) as Statistic_variables;
-        
-        bestScore = jsonToObj.bestscore;
-        AllClicks = jsonToObj.allClicks;
-        allLost = jsonToObj.allLost;
+        if (PlatformType()) {
+            bestScore = loadBestscore();
+            AllClicks = loadAllClicks();
+            allLost = loadAllLost();
+
+        } else {
+            var json = File.ReadAllText(path);
+            if (json == null) return;
+
+            var jsonToObj = JsonUtility.FromJson<Statistic_variables>(json) as Statistic_variables;
+
+            bestScore = jsonToObj.bestscore;
+            AllClicks = jsonToObj.allClicks;
+            allLost = jsonToObj.allLost;
+        }
     }
 
     void Start () {
-        Screen.SetResolution(getWidth(), getHeight(), false);
-        getScreen();
-
         path = Application.persistentDataPath + "/savedVariables.json";
-        PlatformType();
+        
+        if (PlatformType()) {
+            Screen.SetResolution(getWidth(), getHeight(), false);
+        }
+        
+        load();
     }
 
-    private void PlatformType () {
+    private static bool PlatformType () {
         var type = Application.platform;
+        var result = false;
 
-        if (type == RuntimePlatform.WebGLPlayer) StartCoroutine(call(path));
-        else load();
+        if (type == RuntimePlatform.WebGLPlayer) {
+            result = true;
+        } 
+
+        return result;
     }
     void Update()
     {
@@ -54,32 +73,19 @@ public class Statistic : MonoBehaviour
     }
 
     public static void save () {
-        var obj = new Statistic_variables();
         if (bestScore < score) bestScore = score;
-        allLost++;
         
-        obj.score = score;
-        obj.bestscore = bestScore;
-        obj.allLost = allLost;
-        obj.allClicks = AllClicks;
+        if (PlatformType()) saveGame(score, bestScore, AllClicks, allLost);
+        else {
+            var obj = new Statistic_variables() {
+                score = score,
+                allClicks = AllClicks,
+                allLost = allLost,
+                bestscore = bestScore
+            };
 
-        var objJSON = JsonUtility.ToJson(obj);
-
-        File.WriteAllText(path, objJSON);
-        print(File.ReadAllText(path));
-    }
-
-    IEnumerator call (string source) {
-        using (UnityWebRequest server = new UnityWebRequest(source)) {
-            yield return server.SendWebRequest();
-            
-            if (server.result == UnityWebRequest.Result.Success) {
-                print("variables into json: "+ server.downloadHandler.text);
-                load();
-            } else {
-                print("cant receive file");
-            }
-        }   
+            File.WriteAllText(path, JsonUtility.ToJson(obj));
+        }
     }
 }
 

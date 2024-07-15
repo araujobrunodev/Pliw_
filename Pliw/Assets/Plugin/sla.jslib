@@ -7,13 +7,34 @@ mergeInto(LibraryManager.library, {
         return window.innerHeight;
     },
 
-    getScreen: function () {
-        let canva = document.getElementById("unity-canvas");
+    saveGame: function (score, bestscore, allClicks, allLost) {
+        localStorage.setItem("score", score.toString());
+        localStorage.setItem("bestscore", bestscore.toString());
+        localStorage.setItem("allClicks", allClicks.toString());
+        localStorage.setItem("allLost", allLost.toString());
+    },
 
-        canva.style.width = "100%";
-        canva.style.height = "100%";
-        document.body.style.overflow = "hidden";
+    loadBestscore: function () {
+        let bestscore = localStorage.getItem("bestscore");
+
+        if (bestscore == null) return;
         
-        console.log("change canvas's size");
+        return Number(bestscore);
+    },
+
+    loadAllClicks: function () {
+        let allClicks = localStorage.getItem("allClicks");
+
+        if (allClicks == null) return;
+        
+        return Number(allClicks);
+    },
+
+    loadAllLost: function () {
+        let allLost = localStorage.getItem("allLost");
+        
+        if (allLost == null) return;
+        
+        return Number(allLost);
     }
 });

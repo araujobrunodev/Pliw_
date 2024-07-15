@@ -31,8 +31,8 @@ public class PliwBalls : MonoBehaviour
         var max = 0;
         var random = 0;
 
-        if (level.Level <= 35) {
-            max = (int)(level.Level / 5);
+        if (level.Level <= 30) {
+            max = (int)(level.Level / 5) + 1;
         } else max = 7;
 
         random = Random.Range(min, max);
