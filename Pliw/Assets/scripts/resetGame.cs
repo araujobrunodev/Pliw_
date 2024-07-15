@@ -31,6 +31,8 @@ public class resetGame : MonoBehaviour
                 obj.GetComponent<Image>().color = new Color(255f, 0f, 0f, 255f);
                 msgTitle = "You lose";
                 msglevel = "Level: " + level.Level;
+                Statistic.allLost++;
+                print("allLost: "+Statistic.allLost);
                 break;
 
             case "win":
@@ -46,11 +48,11 @@ public class resetGame : MonoBehaviour
         
         if (stateKey != "") return;
         
-        Statistic.save();
         placeBoardArrow.SetActive(true);
         placeBoardLevel.SetActive(false);
         Decide();
         State();
+        Statistic.save();
     }
 
     private static void Decide () {
