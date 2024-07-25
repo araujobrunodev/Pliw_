@@ -12,11 +12,6 @@ public class Statistic : MonoBehaviour
     public TMP_Text scoreText, bestScoreText, AllClicksText, AllLostText;
     public static int score, bestScore, AllClicks, allLost;
     private static string path = "";
-    
-    [DllImport("__Internal")]
-    private static extern int getWidth();
-    [DllImport("__Internal")]
-    private static extern int getHeight();
     [DllImport("__Internal")]
     private static extern int loadBestscore();
     [DllImport("__Internal")]
@@ -46,10 +41,6 @@ public class Statistic : MonoBehaviour
 
     void Start () {
         path = Application.persistentDataPath + "/savedVariables.json";
-        
-        if (PlatformType()) {
-            Screen.SetResolution(getWidth(), getHeight(), false);
-        }
         
         load();
     }
