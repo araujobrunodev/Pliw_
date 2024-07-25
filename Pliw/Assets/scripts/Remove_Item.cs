@@ -7,14 +7,15 @@ using static PliwBalls;
 public class Remove_Item : MonoBehaviour
 {
     private bool IsDead = false;
-    private float timeToRemoveIt = 0.2f;
     void OnMouseDown () {
         if (!IsDead) {
+            var audio = GetComponent<AudioSource>();
             IsDead = true;
+            audio.Play();
             PliwBalls.Remove(gameObject.name);
             Statistic.AllClicks++;
             Statistic.score++;
-            Destroy(gameObject, timeToRemoveIt);
+            Destroy(gameObject,(float)audio.clip.length);
         }
     }
 }

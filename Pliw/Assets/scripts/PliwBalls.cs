@@ -10,6 +10,7 @@ public class PliwBalls : MonoBehaviour
     public static List<PliwBall> pliwBalls = new List<PliwBall>();
     private GameObject warn;
     public Sprite[] sprites;
+    public AudioClip clip;
     private float time = 0f;
     private float StartX, StartY, EndX, EndY;
 
@@ -140,10 +141,12 @@ public class PliwBalls : MonoBehaviour
         pb.item.AddComponent<RectTransform>();
         pb.item.AddComponent<SpriteRenderer>();
         pb.item.AddComponent<CircleCollider2D>();
+        pb.item.AddComponent<AudioSource>();
         pb.item.AddComponent<Remove_Item>();
         pb.item.GetComponent<RectTransform>().localPosition = new Vector2(pb.positionX, pb.positionY);
         pb.item.GetComponent<RectTransform>().localScale = new Vector3(125, 125, 0);
         pb.item.GetComponent<SpriteRenderer>().sprite = sprites[pb.type];
+        pb.item.GetComponent<AudioSource>().clip = clip;
     }
 
     void Move () {

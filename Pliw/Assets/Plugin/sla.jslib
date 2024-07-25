@@ -1,12 +1,4 @@
 mergeInto(LibraryManager.library, {
-    getWidth: function () {
-        return window.innerWidth;
-    },
-
-    getHeight: function () {
-        return window.innerHeight;
-    },
-
     saveGame: function (score, bestscore, allClicks, allLost) {
         localStorage.setItem("score", score.toString());
         localStorage.setItem("bestscore", bestscore.toString());
