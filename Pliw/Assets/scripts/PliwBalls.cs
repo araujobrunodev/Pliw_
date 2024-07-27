@@ -147,6 +147,7 @@ public class PliwBalls : MonoBehaviour
         pb.item.GetComponent<RectTransform>().localScale = new Vector3(125, 125, 0);
         pb.item.GetComponent<SpriteRenderer>().sprite = sprites[pb.type];
         pb.item.GetComponent<AudioSource>().clip = clip;
+        pb.item.GetComponent<AudioSource>().pitch = 3;
     }
 
     void Move () {

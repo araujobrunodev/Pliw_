@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using static Timer;
+using static pliwTrack;
 
 public class Countdown : MonoBehaviour
 {
@@ -14,7 +15,10 @@ public class Countdown : MonoBehaviour
     public Image warn;
     void Count () 
     {
-        if (time > 0) time -= Time.deltaTime;
+        if (time > 0) {
+            time -= Time.deltaTime;
+            if (time > 1 && time < 2) pliwTrack.Play();
+        }
         else {
             Timer.CanStartToCount = true;
             warn.gameObject.SetActive(false);
