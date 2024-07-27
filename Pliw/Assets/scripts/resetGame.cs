@@ -7,6 +7,7 @@ using TMPro;
 using static QuantityCalculation;
 using UnityEngine.UI;
 using static level;
+using static pliwTrack;
 
 public class resetGame : MonoBehaviour
 {
@@ -32,7 +33,6 @@ public class resetGame : MonoBehaviour
                 msgTitle = "You lose";
                 msglevel = "Level: " + level.Level;
                 Statistic.allLost++;
-                print("allLost: "+Statistic.allLost);
                 break;
 
             case "win":
@@ -45,6 +45,7 @@ public class resetGame : MonoBehaviour
 
     private static void Reset () {
         PliwBalls.RemoveAll();
+        pliwTrack.Pause(stateKey);
         
         if (stateKey != "") return;
         
